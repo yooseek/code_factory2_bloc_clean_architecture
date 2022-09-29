@@ -1,9 +1,12 @@
 import 'package:code_factory2_bloc_clean_architecture/core/configs/color_const.dart';
 import 'package:code_factory2_bloc_clean_architecture/core/presentation/widgets/default_layout.dart';
+import 'package:code_factory2_bloc_clean_architecture/feature/order/presentation/blocs/order_bloc/order_bloc.dart';
+import 'package:code_factory2_bloc_clean_architecture/feature/restaurant/presentation/blocs/restaurant_bloc/restaurant_bloc.dart';
 import 'package:code_factory2_bloc_clean_architecture/feature/restaurant/presentation/widgets/prodoct_card.dart';
 import 'package:code_factory2_bloc_clean_architecture/feature/user/presentation/blocs/basket_bloc/basket_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class BasketScreen extends StatelessWidget {
   const BasketScreen({Key? key}) : super(key: key);
@@ -96,37 +99,47 @@ class BasketScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: PRIMARY_COLOR,
-                      ),
-                      onPressed: () async {
-                        // final isSuccess =
-                        // await ref.read(orderProvider.notifier).postOrder();
-                        //
-                        // if (isSuccess) {
-                        //   print('성공했다.');
-                        //   context.goNamed(OrderDoneScreen.routeName);
-                        // } else {
-                        //   print('실패했다.');
-                        //   ScaffoldMessenger.of(context).showSnackBar(
-                        //     SnackBar(
-                        //       content: Text('결제 실패'),
-                        //     ),
-                        //   );
-                        // }
-                      },
-                      child: Text(
-                        '결제하기',
-                      ),
-                    ),
-                  ),
+                  const OrderButton(),
                 ],
               )
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class OrderButton extends StatelessWidget {
+  const OrderButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final orderStatus = context.select<OrderBloc,RequestStatus>((value) => value.state.requestStatus);
+
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          primary: PRIMARY_COLOR,
+        ),
+        onPressed: () async {
+          context.read<OrderBloc>().add(PostOrderEvent());
+
+          if (orderStatus != RequestStatus.error) {
+            print('성공했다.');
+            context.goNamed('order_done');
+          } else {
+            print('실패했다.');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('결제 실패'),
+              ),
+            );
+          }
+        },
+        child: Text(
+          '결제하기',
         ),
       ),
     );

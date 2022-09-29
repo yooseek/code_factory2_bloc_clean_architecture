@@ -1,6 +1,9 @@
 import 'package:code_factory2_bloc_clean_architecture/core/configs/color_const.dart';
 import 'package:code_factory2_bloc_clean_architecture/core/presentation/widgets/default_layout.dart';
+import 'package:code_factory2_bloc_clean_architecture/feature/order/presentation/screens/order_screen.dart';
+import 'package:code_factory2_bloc_clean_architecture/feature/product/presentation/screens/product_screen.dart';
 import 'package:code_factory2_bloc_clean_architecture/feature/restaurant/presentation/screens/restaurant_screen.dart';
+import 'package:code_factory2_bloc_clean_architecture/feature/user/presentation/screnns/profile_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -78,17 +81,11 @@ class _RootTabState extends State<RootTab> with SingleTickerProviderStateMixin{
         child: TabBarView(
           physics: const NeverScrollableScrollPhysics(), // 스크롤을 해도 넘어가지 않음
           controller: controller,
-          children: [
+          children: const [
             RestaurantScreen(),
-            RestaurantScreen(),
-            RestaurantScreen(),
-            RestaurantScreen(),
-            // RestaurantScreen(),
-            // RestaurantScreen(),
-            // ProfileScreen(),
-            // ProductScreen(),
-            // OrderScreen(),
-            // ProfileScreen(),
+            ProductScreen(),
+            OrderScreen(),
+            ProfileScreen(),
           ],
         ),
       ),

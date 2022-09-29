@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:code_factory2_bloc_clean_architecture/core/presentation/screens/root_tab.dart';
 import 'package:code_factory2_bloc_clean_architecture/core/presentation/screens/splash_screen.dart';
+import 'package:code_factory2_bloc_clean_architecture/feature/order/presentation/screens/order_done_screen.dart';
 import 'package:code_factory2_bloc_clean_architecture/feature/restaurant/presentation/screens/basket_screen.dart';
 import 'package:code_factory2_bloc_clean_architecture/feature/restaurant/presentation/screens/restaurant_detail_screen.dart';
 import 'package:code_factory2_bloc_clean_architecture/feature/user/presentation/blocs/user_bloc/user_bloc.dart';
@@ -66,10 +67,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> with ChangeNotifier {
             path: '/basket',
             name: 'basket',
             builder: (context, state) => const BasketScreen()),
-        // GoRoute(
-        //     path: '/order_done',
-        //     name: OrderDoneScreen.routeName,
-        //     builder: (context, state) => OrderDoneScreen()),
+        GoRoute(
+            path: '/order_done',
+            name: 'order_done',
+            builder: (context, state) => const OrderDoneScreen()),
       ];
 
   String? redirectLogic(GoRouterState state) {
@@ -85,7 +86,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> with ChangeNotifier {
     // 유저 정보가 없는데 로그인 중이면
     // 그대로 로그인 페이지에 두고
     // 만약 로그인 중이 아니라면 로그인 페이지로 이동
-    if (user == null) {
+    if (user == null || userBloc.state.userStatus == UserStatus.empty) {
       return logging ? null : '/login';
     }
 

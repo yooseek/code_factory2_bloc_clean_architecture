@@ -60,6 +60,7 @@ class CustomInterceptor extends Interceptor {
 
     // 현재 리프레쉬 토큰도 없으면 에러를 발생 시킨다.
     if (refreshToken == null) {
+      print('[ERROR] [${err.message}] refreshToken 만료');
       return handler.reject(err);
     }
 

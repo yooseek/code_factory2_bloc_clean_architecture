@@ -1,4 +1,6 @@
 import 'package:code_factory2_bloc_clean_architecture/core/presentation/bloc/logger.dart';
+import 'package:code_factory2_bloc_clean_architecture/feature/order/presentation/blocs/order_bloc/order_bloc.dart';
+import 'package:code_factory2_bloc_clean_architecture/feature/product/presentation/blocs/product_bloc/product_bloc.dart';
 import 'package:code_factory2_bloc_clean_architecture/feature/rating/presentation/bloc/rating_bloc.dart';
 import 'package:code_factory2_bloc_clean_architecture/feature/restaurant/presentation/blocs/restaurant_bloc/restaurant_bloc.dart';
 import 'package:code_factory2_bloc_clean_architecture/feature/user/presentation/blocs/auth_bloc/auth_bloc.dart';
@@ -27,9 +29,11 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<UserBloc>(create: (context)=> serviceLocator()..add(UserModelGetMeEvent()),lazy: false),
         BlocProvider<AuthBloc>(create: (context)=> serviceLocator()),
-        BlocProvider<RestaurantBloc>(create: (context)=> serviceLocator()..add(const GetRestaurantListEvent()),lazy: false,),
+        BlocProvider<RestaurantBloc>(create: (context)=> serviceLocator()..add(const GetRestaurantListEvent())),
         BlocProvider<RatingBloc>(create: (context)=> serviceLocator()),
         BlocProvider<BasketBloc>(create: (context)=> serviceLocator()),
+        BlocProvider<OrderBloc>(create: (context)=> serviceLocator()..add(const GetOrderListEvent())),
+        BlocProvider<ProductBloc>(create: (context)=> serviceLocator()..add(const GetProductListEvent())),
       ],
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(), //터치시 키보드 내리기

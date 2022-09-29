@@ -1,6 +1,17 @@
 import 'package:code_factory2_bloc_clean_architecture/core/configs/data_const.dart';
 import 'package:code_factory2_bloc_clean_architecture/core/data/data_source/dio_interceptor.dart';
 import 'package:code_factory2_bloc_clean_architecture/core/network/network_info.dart';
+import 'package:code_factory2_bloc_clean_architecture/feature/order/data/data_source/order_service.dart';
+import 'package:code_factory2_bloc_clean_architecture/feature/order/data/repository/order_repository_impl.dart';
+import 'package:code_factory2_bloc_clean_architecture/feature/order/domain/repository/order_repository.dart';
+import 'package:code_factory2_bloc_clean_architecture/feature/order/domain/use_case/get_order_list.dart';
+import 'package:code_factory2_bloc_clean_architecture/feature/order/domain/use_case/post_order.dart';
+import 'package:code_factory2_bloc_clean_architecture/feature/order/presentation/blocs/order_bloc/order_bloc.dart';
+import 'package:code_factory2_bloc_clean_architecture/feature/product/data/data_source/product_service.dart';
+import 'package:code_factory2_bloc_clean_architecture/feature/product/data/repository/product_repository_impl.dart';
+import 'package:code_factory2_bloc_clean_architecture/feature/product/domain/repository/product_repository.dart';
+import 'package:code_factory2_bloc_clean_architecture/feature/product/domain/use_case/get_product_list.dart';
+import 'package:code_factory2_bloc_clean_architecture/feature/product/presentation/blocs/product_bloc/product_bloc.dart';
 import 'package:code_factory2_bloc_clean_architecture/feature/rating/data/data_source/rating_service.dart';
 import 'package:code_factory2_bloc_clean_architecture/feature/rating/data/respository/rating_repository_impl.dart';
 import 'package:code_factory2_bloc_clean_architecture/feature/rating/domain/repository/rating_repository.dart';
@@ -53,12 +64,16 @@ Future<void> initializeDependencies() async {
   //data source(service)
   serviceLocator.registerLazySingleton<RestaurantService>(() => RestaurantService(serviceLocator(),baseUrl: 'http://$ip/restaurant'));
   serviceLocator.registerLazySingleton<RatingService>(() => RatingService(serviceLocator(),baseUrl: 'http://$ip/restaurant'));
+  serviceLocator.registerLazySingleton<OrderService>(() => OrderService(serviceLocator(),baseUrl: 'http://$ip/order'));
+  serviceLocator.registerLazySingleton<ProductService>(() => ProductService(serviceLocator(),baseUrl: 'http://$ip/product'));
   serviceLocator.registerLazySingleton<RestaurantServiceLocal>(() => RestaurantServiceLocalImpl(hiveDatabase: serviceLocator()));
   serviceLocator.registerLazySingleton<UserService>(() => UserService(serviceLocator(),baseUrl: 'http://$ip/user/me'));
   serviceLocator.registerLazySingleton<AuthService>(() => AuthServiceImpl(dio: serviceLocator(), baseUrl: 'http://$ip/auth'));
   //repoimpl
   serviceLocator.registerLazySingleton<RestaurantRepository>(() => RestaurantRepositoryImpl(restaurantService: serviceLocator(), networkInfo: serviceLocator()));
   serviceLocator.registerLazySingleton<RatingRepository>(() => RatingRepositoryImpl(ratingService: serviceLocator()));
+  serviceLocator.registerLazySingleton<OrderRepository>(() => OrderRepositoryImpl(orderService: serviceLocator()));
+  serviceLocator.registerLazySingleton<ProductRepository>(() => ProductRepositoryImpl(productService: serviceLocator()));
   serviceLocator.registerLazySingleton<UserRepository>(() => UserRepositoryImpl(userService: serviceLocator()));
   serviceLocator.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(authService: serviceLocator()));
   //usecases
@@ -68,14 +83,21 @@ Future<void> initializeDependencies() async {
   serviceLocator.registerLazySingleton<GetBasket>(() => GetBasket(userRepository: serviceLocator()));
   serviceLocator.registerLazySingleton<PatchBasket>(() => PatchBasket(userRepository: serviceLocator()));
   serviceLocator.registerLazySingleton<GetRatingList>(() => GetRatingList(ratingRepository: serviceLocator()));
+  serviceLocator.registerLazySingleton<PostOrder>(() => PostOrder(orderRepository: serviceLocator()));
+  serviceLocator.registerLazySingleton<GetOrderList>(() => GetOrderList(orderRepository: serviceLocator()));
+  serviceLocator.registerLazySingleton<GetProductList>(() => GetProductList(productRepository: serviceLocator()));
   serviceLocator.registerLazySingleton<LogIn>(() => LogIn(authRepository: serviceLocator()));
   //blocs
   serviceLocator.registerFactory<RestaurantBloc>(() => RestaurantBloc(getRestaurantList: serviceLocator(),getRestaurantDetail: serviceLocator()));
-  serviceLocator.registerFactory<BasketBloc>(() => BasketBloc(getBasket: serviceLocator(), patchBasket: serviceLocator()));
+  serviceLocator.registerFactory<AuthBloc>(() => AuthBloc(userBloc: serviceLocator()));
   serviceLocator.registerFactory<RatingBloc>(() => RatingBloc(getRatingList: serviceLocator()));
+  serviceLocator.registerFactory<OrderBloc>(() => OrderBloc(postOrder: serviceLocator(), getOrderList: serviceLocator(), basketBloc: serviceLocator()));
+  serviceLocator.registerFactory<ProductBloc>(() => ProductBloc(getProductList: serviceLocator()));
   /// stream 생성하는 bloc은 singleton을 유지해야한다.
   serviceLocator.registerLazySingleton<UserBloc>(() => UserBloc(secureStorage: serviceLocator(), logIn: serviceLocator(), getMe: serviceLocator()));
-  serviceLocator.registerFactory<AuthBloc>(() => AuthBloc(userBloc: serviceLocator()));
+  /// 다른 BLoc에서 참조하는 bloc은 singleton을 유지해야한다.
+  serviceLocator.registerLazySingleton<BasketBloc>(() => BasketBloc(getBasket: serviceLocator(), patchBasket: serviceLocator()));
+
 
   // go_router
   serviceLocator.registerLazySingleton<GoRouter>(() => GoRouter(

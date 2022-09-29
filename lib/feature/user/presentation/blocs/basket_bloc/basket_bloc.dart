@@ -30,7 +30,6 @@ class BasketBloc extends Bloc<BasketEvent, BasketState> {
 
   Future<void> _addToBasketEvent(AddToBasketEvent event, emit) async {
     final product = event.product;
-
     // 요청을 먼저 보내고, 응답이 오면, 캐시를 업데이트
     // Optimistic Response (긍정적 응답) - 응답의 성공을 가정하고 상태를 먼저 업데이트함
 
@@ -39,7 +38,6 @@ class BasketBloc extends Bloc<BasketEvent, BasketState> {
             .firstWhereOrNull((element) => element.product.id == product.id) !=
         null;
 
-    print('바스켓 애드 이벤트');
     if (exists) {
       // 장바구니에 해당 상품이 있을 때
       emit(state.copyWith(
