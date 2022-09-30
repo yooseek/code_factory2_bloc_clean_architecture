@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:code_factory2_bloc_clean_architecture/core/data/dto/pagination_params.dart';
 import 'package:code_factory2_bloc_clean_architecture/core/data/dto/response_dto.dart';
 import 'package:code_factory2_bloc_clean_architecture/feature/product/domain/entities/product_model.dart';
@@ -18,7 +19,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   ProductBloc({
     required this.getProductList,
   }) : super(ProductState.initial()) {
-    on<GetProductListEvent>(_getProductListEvent);
+    on<GetProductListEvent>(_getProductListEvent,transformer: droppable());
   }
 
   Future<void> _getProductListEvent(GetProductListEvent event, emit) async {

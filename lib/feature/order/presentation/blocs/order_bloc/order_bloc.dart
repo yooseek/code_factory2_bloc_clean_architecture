@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:code_factory2_bloc_clean_architecture/core/data/dto/pagination_params.dart';
 import 'package:code_factory2_bloc_clean_architecture/core/data/dto/response_dto.dart';
 import 'package:code_factory2_bloc_clean_architecture/feature/order/domain/entities/order_model.dart';
@@ -26,8 +27,8 @@ class OrderBloc extends Bloc<OrderEvent, OrderState> {
     required this.getOrderList,
     required this.basketBloc,
   }) : super(OrderState.initial()) {
-    on<GetOrderListEvent>(_getOrderListEvent);
-    on<PostOrderEvent>(_postOrderEvent);
+    on<GetOrderListEvent>(_getOrderListEvent,transformer: droppable());
+    on<PostOrderEvent>(_postOrderEvent,transformer: droppable());
   }
 
   Future<void> _getOrderListEvent(GetOrderListEvent event, emit) async {
